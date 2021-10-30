@@ -3,6 +3,7 @@ package com.jsgr.temporizador
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     private var score = 0
     private var started = false
 
+    private val TAG = MainActivity::class.java.simpleName
     private lateinit var countDownTimer: CountDownTimer
     private val initialCountDown : Long = 10000
     private val countDownInterval : Long = 1000
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.d(TAG, "Se ha llamado On Create!")
         textViewScore = findViewById(R.id.textViewScore)
         textViewTime = findViewById(R.id.textViewTime)
         buttonIniciar = findViewById(R.id.buttonIniciar)
@@ -50,6 +53,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun reset() {
         score = 0
+
+        Log.d(TAG,"Se ha reiniciado el juego!")
 
         val initialScore = getString(R.string.puntaje, score)
         textViewScore.text = initialScore
@@ -76,12 +81,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun terminar() {
         Toast.makeText(this,getString(R.string.mensaje_terminar, score), Toast.LENGTH_LONG).show()
+        Log.d(TAG, "Ha terminado el juego con puntaje de $score")
         reset()
     }
 
     private fun start() {
         countDownTimer.start()
         started = true
+        Log.d(TAG, "Ha dado inicio el juego!")
         buttonIniciar.text = getString(R.string.click_aqui)
     }
 }

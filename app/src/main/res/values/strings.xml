@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Temporizador</string>
+    <string name="puntaje">Puntaje : %1$d</string>
+    <string name="tiempo">Tiempo : %1$d</string>
+    <string name="click_aqui">Click rápido!</string>
+    <string name="click_aqui_antes">Click para empezar!</string>
+    <string name="mensaje_terminar">Se ha terminado, su puntaje fue de %1$d</string>
+</resources>

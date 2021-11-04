@@ -3,6 +3,7 @@ package com.jsgr.temporizador
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -36,7 +37,28 @@ class MainActivity : AppCompatActivity() {
 
         buttonIniciar.setOnClickListener{ incrementScore() }
 
-        reset()
+        if(savedInstanceState != null) {
+            score = savedInstanceState.getInt(SCORE_KEY)
+            timeLeft = savedInstanceState.getInt(TIME_KEY)
+            buttonIniciar.text = savedInstanceState.getString(BUTTON_KEY)
+            loadApp()
+        }
+        else
+            reset()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(SCORE_KEY, score)
+        outState.putInt(TIME_KEY, timeLeft)
+        outState.putString(BUTTON_KEY, buttonIniciar.text.toString())
+        countDownTimer.cancel()
+        Log.d(TAG, "Instancia guardada con score: $score y time: $timeLeft")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "Se ha llamado on destroy.")
     }
 
     private fun incrementScore() {
@@ -79,8 +101,31 @@ class MainActivity : AppCompatActivity() {
         started = false
     }
 
+    private fun loadApp(){
+        val restoredScore = getString(R.string.puntaje, score)
+        textViewScore.text = restoredScore
+
+        val restoredTime = getString(R.string.tiempo, timeLeft)
+        textViewTime.text = restoredTime
+
+        countDownTimer = object :  CountDownTimer((timeLeft * 1000).toLong(), countDownInterval) {
+            override fun onTick(millisUntilFinished: Long) {
+                timeLeft = millisUntilFinished.toInt() / 1000
+
+                val timeLeftString = getString(R.string.tiempo, timeLeft)
+                textViewTime.text = timeLeftString
+            }
+            override fun onFinish() {
+                terminar()
+            }
+        }
+        countDownTimer.start()
+        started = true
+    }
+
     private fun terminar() {
         Toast.makeText(this,getString(R.string.mensaje_terminar, score), Toast.LENGTH_LONG).show()
+        buttonIniciar.text = getString(R.string.click_aqui_antes)
         Log.d(TAG, "Ha terminado el juego con puntaje de $score")
         reset()
     }
@@ -90,5 +135,11 @@ class MainActivity : AppCompatActivity() {
         started = true
         Log.d(TAG, "Ha dado inicio el juego!")
         buttonIniciar.text = getString(R.string.click_aqui)
+    }
+
+    companion object {
+        private const val SCORE_KEY = "SCORE_KEY"
+        private const val TIME_KEY = "TIME_KEY"
+        private const val BUTTON_KEY = "BUTTON_KEY"
     }
 }
